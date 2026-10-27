@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="description" content="RAG Assistant — AI-powered answers from your video library"/>
+  <meta name="theme-color" content="#07070f"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' http://localhost:8000 https:; frame-src https://www.youtube.com; img-src 'self' data:;"/>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+  <link rel="apple-touch-icon" href="/favicon.svg"/>
+  <style>
+    @font-face { font-family:'DM Sans'; font-display:swap; font-weight:300 700; src:local('DM Sans'); }
+    @font-face { font-family:'JetBrains Mono'; font-display:swap; font-weight:400 500; src:local('JetBrains Mono'); }
+    html { background:#07070f; color:#e8e8f4; }
+    body { margin:0; font-family:'DM Sans',system-ui,sans-serif; overflow:hidden; height:100dvh; }
+    #root { height:100dvh; display:flex; overflow:hidden; }
+    #app-loader {
+      position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+      background:#07070f; z-index:9999; transition:opacity 0.3s;
+    }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    #app-loader svg { animation:spin 1s linear infinite; }
+  </style>
+  <title>RAG Assistant</title>
+</head>
+<body>
+  <div id="app-loader" aria-label="Loading" role="status">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#7c5cfc" stroke-width="2.5" stroke-linecap="round">
+      <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+    </svg>
+  </div>
+  <div id="root"></div>
+  <noscript><p style="padding:2rem;text-align:center">RAG Assistant requires JavaScript.</p></noscript>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>
