@@ -4,6 +4,7 @@ const initialState = {
   isLoading: false, isStreaming: false, error: null,
   sidebarOpen: true, ragPanelOpen: true, theme: 'dark',
   uploadStatus: null, uploadProgress: 0, uploadMessage: null, totalChunks: 0,
+  knowledgeOpen: false, sourcesMessageId: null, draft: '',
 }
 
 function reducer(state, action) {
@@ -20,6 +21,9 @@ function reducer(state, action) {
       document.documentElement.classList.toggle('dark', next === 'dark')
       return { ...state, theme: next }
     }
+    case 'SET_KNOWLEDGE':   return { ...state, knowledgeOpen: action.v }
+    case 'SHOW_SOURCES':    return { ...state, sourcesMessageId: action.id, ragPanelOpen: true }
+    case 'SET_DRAFT':       return { ...state, draft: action.v }
     case 'SET_UPLOAD':   return { ...state, ...action.patch }
     case 'RESET_UPLOAD': return { ...state, uploadStatus: null, uploadProgress: 0, uploadMessage: null }
     default: return state
@@ -41,14 +45,17 @@ export function UIProvider({ children }) {
   const toggleTheme     = useCallback(()    => dispatch({ type: 'TOGGLE_THEME' }), [])
   const setUpload       = useCallback((patch)=> dispatch({ type: 'SET_UPLOAD',     patch }), [])
   const resetUpload     = useCallback(()    => dispatch({ type: 'RESET_UPLOAD' }), [])
+  const setKnowledgeOpen = useCallback((v)  => dispatch({ type: 'SET_KNOWLEDGE', v }), [])
+  const showSources      = useCallback((id)  => dispatch({ type: 'SHOW_SOURCES', id }), [])
+  const setDraft          = useCallback((v)   => dispatch({ type: 'SET_DRAFT', v }), [])
 
   const value = useMemo(() => ({
     ...state,
     setLoading, setStreaming, setError, clearError,
     toggleSidebar, setSidebar, toggleRagPanel, toggleTheme,
-    setUpload, resetUpload,
+    setUpload, resetUpload, setKnowledgeOpen, showSources, setDraft,
   }), [state, setLoading, setStreaming, setError, clearError,
-    toggleSidebar, setSidebar, toggleRagPanel, toggleTheme, setUpload, resetUpload])
+    toggleSidebar, setSidebar, toggleRagPanel, toggleTheme, setUpload, resetUpload, setKnowledgeOpen, showSources, setDraft])
 
   return <UIContext.Provider value={value}>{children}</UIContext.Provider>
 }

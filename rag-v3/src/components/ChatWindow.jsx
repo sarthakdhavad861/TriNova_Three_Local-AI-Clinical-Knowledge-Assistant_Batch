@@ -27,34 +27,30 @@ const TypingIndicator = memo(function TypingIndicator() {
 
 /* ── Empty state ── */
 const EmptyState = memo(function EmptyState() {
-  const { sendMessage, suggestions } = useSession()
+  const { suggestions, health } = useSession()
+  const { setDraft, setKnowledgeOpen } = useUI()
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-6 text-center py-12 animate-slide-up">
-      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet/20 to-cyan/10 border border-violet/20 flex items-center justify-center mb-5 shadow-glow-sm">
-        <SparklesIcon size={28} className="text-violet" aria-hidden="true" />
-      </div>
-      <h2 className="text-xl font-semibold text-ink mb-2 text-balance">
-        What would you like to explore?
-      </h2>
-      <p className="text-sm text-ink-muted max-w-xs leading-relaxed mb-8">
-        Ask anything — I'll retrieve the most relevant video segments and guide you to the exact timestamp.
+      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet/20 to-cyan/10 border border-violet/20 flex items-center justify-center mb-5 shadow-glow-sm text-violet text-xl font-bold" aria-hidden="true">Rx</div>
+      <h2 className="text-xl font-semibold text-ink mb-2 text-balance">Clinical reference, from your own documents</h2>
+      <p className="text-sm text-ink-muted max-w-md leading-relaxed mb-6">
+        Ask about medicines, medical equipment or symptoms. Every answer cites the ingested source it came from, structured records are shown
+        verbatim, and the assistant says so when the knowledge base has nothing reliable.
       </p>
-      <div
-        className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-lg w-full"
-        role="list"
-        aria-label="Suggested prompts"
-      >
+      {health.ok && health.sources === 0 && (
+        <button onClick={() => setKnowledgeOpen(true)} className="mb-6 text-xs px-4 py-2.5 rounded-xl border border-amber/40 bg-amber/10 text-amber hover:bg-amber/20 transition-all">
+          The knowledge base is empty — add reference documents first
+        </button>
+      )}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-lg w-full" role="list" aria-label="Question templates">
         {(suggestions ?? []).slice(0, 4).map((s, i) => (
-          <button
-            key={i}
-            role="listitem"
-            onClick={() => sendMessage(s)}
-            className="text-left text-xs px-3.5 py-3 rounded-xl border border-void-500 text-ink-muted hover:border-violet/30 hover:text-ink hover:bg-void-700 transition-all duration-150 focus-visible:ring-2 focus-visible:ring-violet"
-          >
+          <button key={i} role="listitem" onClick={() => { setDraft(s); document.getElementById('chat-input')?.focus() }}
+            className="text-left text-xs px-3.5 py-3 rounded-xl border border-void-500 text-ink-muted hover:border-violet/30 hover:text-ink hover:bg-void-700 transition-all duration-150 focus-visible:ring-2 focus-visible:ring-violet">
             {s}
           </button>
         ))}
       </div>
+      <p className="text-[10px] text-ink-faint mt-3">Templates fill the question box — replace the &lt;placeholder&gt; with a name from your documents.</p>
     </div>
   )
 })
@@ -96,50 +92,20 @@ const ErrorBanner = memo(function ErrorBanner({ error, onDismiss }) {
 
 /* ── Toolbar ── */
 const Toolbar = memo(function Toolbar() {
-  const { activeSession, clearChat } = useSession()
-  const { toggleSidebar, toggleRagPanel, ragPanelOpen, clearError, isLoading } = useUI()
-  const hasMessages = (activeSession?.messages?.length ?? 0) > 0
-  const msgCount = activeSession?.messages?.length ?? 0
-
+  const { activeEncounter, messages, loadingEncounter } = useSession()
+  const { toggleSidebar, toggleRagPanel, ragPanelOpen, isLoading } = useUI()
+  const msgCount = messages.length
   return (
     <div className="flex items-center gap-2 px-4 py-3 border-b border-void-600 bg-void-900/80 backdrop-blur-sm shrink-0">
-      <button
-        onClick={toggleSidebar}
-        aria-label="Toggle sidebar"
-        className="btn-icon text-ink-muted"
-      >
-        <MenuIcon size={16} />
-      </button>
-
+      <button onClick={toggleSidebar} aria-label="Toggle sidebar" className="btn-icon text-ink-muted"><MenuIcon size={16} /></button>
       <div className="flex-1 min-w-0">
-        <h1 className="text-sm font-semibold text-ink truncate leading-tight">
-          {activeSession?.title ?? 'New Chat'}
-        </h1>
+        <h1 className="text-sm font-semibold text-ink truncate leading-tight">{activeEncounter?.label || 'No encounter selected'}</h1>
         <p className="text-[10px] text-ink-faint tabular-nums">
-          {msgCount} {msgCount === 1 ? 'message' : 'messages'}
-          {isLoading && ' · typing…'}
+          {msgCount} {msgCount === 1 ? 'message' : 'messages'}{loadingEncounter && ' · loading…'}{isLoading && ' · working…'}
         </p>
       </div>
-
-      <div className="flex items-center gap-1">
-        {hasMessages && (
-          <button
-            onClick={clearChat}
-            aria-label="Clear chat history"
-            className="btn-ghost text-xs py-1.5 text-rose/60 hover:text-rose"
-          >
-            <TrashIcon size={13} /> Clear
-          </button>
-        )}
-        <button
-          onClick={toggleRagPanel}
-          aria-label={ragPanelOpen ? 'Hide sources panel' : 'Show sources panel'}
-          aria-pressed={ragPanelOpen}
-          className={`btn-ghost text-xs py-1.5 ${ragPanelOpen ? 'text-violet' : ''}`}
-        >
-          <LayersIcon size={13} /> Sources
-        </button>
-      </div>
+      <button onClick={toggleRagPanel} aria-label={ragPanelOpen ? 'Hide side panel' : 'Show side panel'} aria-pressed={ragPanelOpen}
+        className={`btn-ghost text-xs py-1.5 ${ragPanelOpen ? 'text-violet' : ''}`}><LayersIcon size={13} /> Sources &amp; context</button>
     </div>
   )
 })
@@ -162,8 +128,8 @@ const ScrollToBottomBtn = memo(function ScrollToBottomBtn({ onClick, unreadCount
 
 /* ── Main ChatWindow ── */
 export default function ChatWindow() {
-  const { activeSession, clearChat } = useSession()
-  const { isLoading, isStreaming, error, clearError, ragPanelOpen, toggleRagPanel } = useUI()
+  const { messages: msgs } = useSession()
+  const { isLoading, isStreaming, error, clearError } = useUI()
 
   const [showScrollBtn, setShowScrollBtn]   = useState(false)
   const [unreadCount,   setUnreadCount]     = useState(0)
@@ -173,7 +139,7 @@ export default function ChatWindow() {
   const atBottomRef   = useRef(true)
   const prevLengthRef = useRef(0)
 
-  const messages    = activeSession?.messages ?? []
+  const messages    = msgs
   const hasMessages = messages.length > 0
 
   /* Online/offline detection */

@@ -1,0 +1,12 @@
+{"type":"meta","workflow":"medicine","model":"llama3.1:latest","urgent_flags":[],"patient_specific":false,"sources":[{"id":"fict-md:v1:0","chunk_id":"fict-md:v1:0","ref":"S1","label":"fict.md, § Fictitrol (SYNTHETIC TEST DATA), v1","text":"Fictitrol 25 mg tablets are indicated for synthetic hyperzorbia. The maximum dose is 100 mg per day.","score":0.4629,"source_id":"fict-md","version":1,"page_number":0,"section":"Fictitrol (SYNTHETIC TEST DATA)","full_text_url":"/chunks/fict-md:v1:0"}],"encounter":true}
+{"type":"records","items":["**Fictitrol** — medicine record\nSource: meds.csv (v1, row 2)\n⚠ Contraindications: eGFR < 30 mL/min/1.73m2\n⚠ Warnings: Monitor synthetic zorb levels\nName: Fictitrol\nDose: Maximum 100 mg per day"],"views":[{"name":"Fictitrol","category":"medicine","source":"meds.csv (v1, row 2)","rows":[{"key":"Contraindications","value":"eGFR < 30 mL/min/1.73m2","warning":true,"not_stated":false},{"key":"Warnings","value":"Monitor synthetic zorb levels","warning":true,"not_stated":false},{"key":"Name","value":"Fictitrol","warning":false,"not_stated":false},{"key":"Dose","value":"Maximum 100 mg per day","warning":false,"not_stated":false}]}],"disclaimer":"Reference information copied from the knowledge base — not a prescription or a diagnosis. Verify against the primary label / manual before clinical use."}
+{"type":"token","text":"The "}
+{"type":"token","text":"maximum "}
+{"type":"token","text":"dose "}
+{"type":"token","text":"is "}
+{"type":"token","text":"100 "}
+{"type":"token","text":"mg "}
+{"type":"token","text":"per "}
+{"type":"token","text":"day "}
+{"type":"token","text":"[S1]. "}
+{"type":"final","status":"answered","text":"The maximum dose is 100 mg per day [S1]. "}

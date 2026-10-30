@@ -1,0 +1,22 @@
+const { chromium } = await import(process.env.PLAYWRIGHT_ENTRY ?? 'playwright')
+const U = process.argv[2]; const res = []; const check = (n, ok, x = '') => { res.push(ok); console.log((ok ? 'PASS ' : 'FAIL ') + n + (ok ? '' : '  ← ' + x)) }
+await fetch(U + '/__reset'); const b = await chromium.launch(); const page = await b.newPage({ viewport: { width: 1500, height: 900 } })
+const errs = []; page.on('pageerror', e => errs.push(String(e)))
+await page.goto(U); await page.waitForSelector('#chat-input')
+await page.fill('#chat-input', 'What is the maximum dose of Fictitrol?'); await page.click('button[aria-label="Send question"]'); await page.waitForSelector('[data-testid="trust"]')
+// 1) token replaced by a wrong one (stolen id, wrong token) → backend 404 → UI must say the encounter is gone and show no data
+await page.evaluate(() => { const k = 'rag_encounters_v1'; const v = JSON.parse(sessionStorage.getItem(k)); v.forEach(e => e.token = 'wrong-token'); sessionStorage.setItem(k, JSON.stringify(v)) })
+await page.reload(); await page.waitForTimeout(1500)
+const body = await page.textContent('body')
+check('wrong token: no history is displayed', !body.includes('Maximum 100 mg') && !body.includes('maximum dose is 100'))
+check('wrong token: user is told the encounter is unavailable', /no longer exists|not found|expired|erased/i.test(body), body.slice(0, 300))
+const ss = await page.evaluate(() => sessionStorage.getItem('rag_encounters_v1'))
+check('wrong-token encounter is dropped from the browser', !ss || !ss.includes('wrong-token'), ss)
+// 2) backend down → clear offline message, nothing crashes
+await page.route('**/*', r => r.abort())
+await page.evaluate(() => window.dispatchEvent(new Event('online')))
+await page.fill('#chat-input', 'What is the maximum dose of Fictitrol?'); await page.click('button[aria-label="Send question"]'); await page.waitForTimeout(1500)
+const t = await page.textContent('body')
+check('network failure shows an error and keeps the question', /could not reach|unreachable|network|backend/i.test(t), t.slice(-400))
+check('no uncaught page errors', errs.length === 0, errs.join('|'))
+await b.close(); process.exit(res.every(Boolean) ? 0 : 1)

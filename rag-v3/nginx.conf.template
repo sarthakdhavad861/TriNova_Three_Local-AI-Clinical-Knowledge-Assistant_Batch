@@ -1,0 +1,42 @@
+# Rendered by the nginx image (envsubst) from BACKEND_URL — see rag-v3/Dockerfile and docs/SETUP.md.
+server {
+    listen 80;
+    server_name _;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    gzip on;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml image/svg+xml;
+    gzip_min_length 1024;
+
+    add_header X-Frame-Options "DENY" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "no-referrer" always;
+
+    # Vite hashes asset filenames → cache aggressively
+    location ~* \.(js|css|woff2|svg|ico|png|jpg|webp)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        access_log off;
+    }
+    location = /index.html {
+        add_header Cache-Control "no-store";
+    }
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # API → FastAPI. Buffering MUST be off or the NDJSON answer stream arrives in one block at the end.
+    # Access logging is off for the API so request metadata (encounter ids) is not written to disk by nginx.
+    location /api/ {
+        proxy_pass ${BACKEND_URL}/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_buffering off;
+        proxy_cache off;
+        proxy_read_timeout 300s;
+        proxy_send_timeout 300s;
+        client_max_body_size 60m;
+        access_log off;
+    }
+}

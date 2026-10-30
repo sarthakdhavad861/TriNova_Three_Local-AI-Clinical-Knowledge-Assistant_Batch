@@ -18,11 +18,6 @@ export function formatRelativeDate(ts) {
   if (d > weekAgo) return d.toLocaleDateString('en-US', { weekday: 'long' })
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
-export function formatVideoTime(secs) {
-  if (typeof secs !== 'number' || isNaN(secs) || secs < 0) return '0:00'
-  const m = Math.floor(secs / 60), s = Math.floor(secs % 60)
-  return m + ':' + s.toString().padStart(2, '0')
-}
 export function formatScore(score)   { return Math.round((score ?? 0) * 100) + '%' }
 export function scorePercent(score)  { return Math.round((score ?? 0) * 100) + '%' }
 export function scoreColor(score) {

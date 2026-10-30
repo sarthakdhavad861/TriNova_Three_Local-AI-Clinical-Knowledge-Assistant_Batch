@@ -3,6 +3,7 @@ import { useUI } from '../context/UIContext.jsx'
 import Sidebar from '../components/Sidebar.jsx'
 import ChatWindow from '../components/ChatWindow.jsx'
 import { ErrorBoundary } from '../components/ErrorBoundary.jsx'
+import KnowledgePanel from '../components/KnowledgePanel.jsx'
 
 const RagPanel = lazy(() => import('../components/RagPanel.jsx'))
 
@@ -42,6 +43,10 @@ export default function ChatPage() {
           <ChatWindow />
         </ErrorBoundary>
       </main>
+
+      <ErrorBoundary fallback={() => null}>
+        <KnowledgePanel />
+      </ErrorBoundary>
 
       {ragPanelOpen && (
         <ErrorBoundary fallback={() => null}>

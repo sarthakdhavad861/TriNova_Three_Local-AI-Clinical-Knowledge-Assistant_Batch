@@ -1,0 +1,14 @@
+{"type":"meta","workflow":"medicine","model":"llama3.1:latest","urgent_flags":["chest_pain"],"patient_specific":true,"sources":[{"id":"fict-md:v1:0","chunk_id":"fict-md:v1:0","ref":"S1","label":"fict.md, § Fictitrol (SYNTHETIC TEST DATA), v1","text":"Fictitrol 25 mg tablets are indicated for synthetic hyperzorbia. The maximum dose is 100 mg per day.","score":0.3273,"source_id":"fict-md","version":1,"page_number":0,"section":"Fictitrol (SYNTHETIC TEST DATA)","full_text_url":"/chunks/fict-md:v1:0"}],"encounter":true}
+{"type":"notices","items":["🚨 URGENT-SYMPTOM KEYWORDS DETECTED: chest pain / pressure (“chest pain”).\nIf this concerns a patient who is unwell right now, follow your local emergency protocol / call the local emergency number immediately — do not wait for this tool. This assistant gives reference information only; it cannot assess an emergency (keyword check, not a clinical triage).","ℹ This looks like a question about an individual patient. This assistant provides reference information only: it does not diagnose, choose treatment, or calculate or adjust doses. Reference text from the knowledge base is shown below for your own clinical judgement."]}
+{"type":"records","items":["**Fictitrol** — medicine record\nSource: meds.csv (v1, row 2)\n⚠ Contraindications: eGFR < 30 mL/min/1.73m2\n⚠ Warnings: Monitor synthetic zorb levels\nName: Fictitrol\nDose: Maximum 100 mg per day"],"views":[{"name":"Fictitrol","category":"medicine","source":"meds.csv (v1, row 2)","rows":[{"key":"Contraindications","value":"eGFR < 30 mL/min/1.73m2","warning":true,"not_stated":false},{"key":"Warnings","value":"Monitor synthetic zorb levels","warning":true,"not_stated":false},{"key":"Name","value":"Fictitrol","warning":false,"not_stated":false},{"key":"Dose","value":"Maximum 100 mg per day","warning":false,"not_stated":false}]}],"disclaimer":"Reference information copied from the knowledge base — not a prescription or a diagnosis. Verify against the primary label / manual before clinical use."}
+{"type":"token","text":"The "}
+{"type":"token","text":"maximum "}
+{"type":"token","text":"dose "}
+{"type":"token","text":"is "}
+{"type":"token","text":"999 "}
+{"type":"token","text":"mg "}
+{"type":"token","text":"per "}
+{"type":"token","text":"day "}
+{"type":"token","text":"[S1]. "}
+{"type":"verification","ok":false,"issues":["“999 mg” is not in the cited source(s): The maximum dose is 999 mg per day ."],"text":"\n\n---\n⚠ Evidence check FAILED — do not rely on this answer without checking the sources:\n- “999 mg” is not in the cited source(s): The maximum dose is 999 mg per day ."}
+{"type":"final","status":"unverified","text":"The maximum dose is 999 mg per day [S1]. "}
